@@ -1,0 +1,22 @@
+datasets: "mini-imageNet"
+datapath: '/space0/songk/datasets/mini-imagenet'
+save_path: 'exps/exp-v1/proto/'
+seed: 17206
+train:
+  max_epoch: 400
+  save_epoch: 20
+  shot: 1
+  query: 15
+  train_way: 30
+  test_way: 5
+  save_path: 'exps/exp-v1/proto/'
+  gpu: '1'
+test:
+  gpu: '1'
+  load: 'max-acc.pth'
+  datapath: '/space0/songk/datasets/mini-imagenet'
+  result: 'exps/exp-v1/proto/'
+  batch: 2000
+  way: 5
+  shot: 1
+  query: 30
