@@ -45,16 +45,7 @@ def initConfig():
 
     set_gpu(cfg.train.gpu)
 
-    trlog = {}
-    trlog['args'] = vars(args)
-    trlog['cfg'] = vars(cfg)
-    trlog['train_loss'] = []
-    trlog['val_loss'] = []
-    trlog['train_acc'] = []
-    trlog['val_acc'] = []
-    trlog['max_acc'] = 0.0
-
-    return cfg, trlog
+    return cfg
 
     
 
@@ -65,14 +56,25 @@ def initTrain(isResume=False):
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
     start_epoch = 1
 
+
+    trlog = {}
+    trlog['args'] = vars(args)
+    trlog['cfg'] = vars(cfg)
+    trlog['train_loss'] = []
+    trlog['val_loss'] = []
+    trlog['train_acc'] = []
+    trlog['val_acc'] = []
+    trlog['max_acc'] = 0.0
+
     if isResume:
         checkpoint = torch.load(osp.join(cfg.save_path, "epoch-last.pth"))
         model = copyModel(checkpoint["model"], nn.DataParallel(Convnet())).cuda()
         optimizer.load_state_dict(checkpoint["optimizer"])
         lr_scheduler.load_state_dict(checkpoint["lr_schedule"])
         start_epoch = checkpoint["epoch"] + 1
+        trlog = torch.load(osp.join(cfg.save_path, 'trlog'))
     
-    return model, optimizer, lr_scheduler, start_epoch
+    return model, optimizer, lr_scheduler, start_epoch, trlog
 
 def train_epoch(cfg, model, optimizer, epoch, train_loader):
     model.train()
@@ -198,8 +200,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     pprint(vars(args))
 
-    cfg, trlog = initConfig()
-    model, optimizer, lr_scheduler, start_epoch = initTrain(args.resume)
+    cfg = initConfig()
+    model, optimizer, lr_scheduler, start_epoch, trlog = initTrain(args.resume)
     train_loader, val_loader = getDataloader()
 
     train(cfg, model, optimizer, lr_scheduler, train_loader, val_loader, start_epoch)

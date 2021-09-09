@@ -10,9 +10,9 @@ train:
   train_way: 30
   test_way: 5
   save_path: 'exps/exp-v1/proto/'
-  gpu: '1'
+  gpu: '0'
 test:
-  gpu: '1'
+  gpu: '0'
   load: 'max-acc.pth'
   datapath: '/space0/songk/datasets/mini-imagenet'
   result: 'exps/exp-v1/proto/'
